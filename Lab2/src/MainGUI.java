@@ -21,7 +21,7 @@ public class MainGUI {
         first.setFont(fontPlain);
         first.setBackground(new Color(208,255,200));
         group.add(first);
-        JRadioButton second = new JRadioButton("ln(x)+x^2+2", true);
+        JRadioButton second = new JRadioButton("sqrt(x)+x^2+2", true);
         second.setFont(fontPlain);
         second.setBackground(new Color(208,255,200));
         group.add(second);
@@ -124,23 +124,29 @@ public class MainGUI {
                         }
                     }
                 }
-                int numberOfMethod;
+                int numberOfMethod = 3;
                 if (left.isSelected()) {
                     numberOfMethod = 1;
-                } else {
-                    if (middle.isSelected()) {
-                        numberOfMethod = 2;
-                    } else {
-                        numberOfMethod = 3;
-                    }
+                }
+                if (middle.isSelected()) {
+                    numberOfMethod = 2;
                 }
 
-                Function function = new Function(numberOfFunction,numberOfMethod,(double)setLow.getValue(),
-                        (double)setHigh.getValue(),Math.pow(10,(-1)*Integer.parseInt(setAccuracy.getValue().toString())));
+                double low = (double)setLow.getValue();
+                double high = (double)setHigh.getValue();
+                int a = 1;
+                if (low > high) {
+                    double t = low;
+                    low = high;
+                    high = t;
+                    a = -1;
+                }
+                Function function = new Function(numberOfFunction,numberOfMethod,low,
+                        high,Math.pow(10,(-1)*Integer.parseInt(setAccuracy.getValue().toString())),a);
                 double one = BigDecimal.valueOf(function.getResult()).setScale((int)setAccuracy.getValue()+2, RoundingMode.HALF_UP).doubleValue();
                 logAnswer.setText(Double.toString(one));
                 logCount.setText(Integer.toString(function.getN()));
-                double two = BigDecimal.valueOf(function.error).setScale((int)setAccuracy.getValue()+2, RoundingMode.HALF_UP).doubleValue();
+                double two = BigDecimal.valueOf(function.error).setScale((int)setAccuracy.getValue()+3, RoundingMode.HALF_UP).doubleValue();
                 logPogr.setText(Double.toString(two));
                 out.updateUI();
             }

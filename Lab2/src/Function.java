@@ -8,23 +8,18 @@ public class Function {
     int n;
     double error;
     double step;
+    int a = 1;
 
-    Function(int numberOfFunction, int numberOfMethod, double lowLimit, double highLimit, double eps) {
+    Function(int numberOfFunction, int numberOfMethod, double lowLimit, double highLimit, double eps, int a) {
         this.numberOfFunction = numberOfFunction;
         this.numberOfMethod = numberOfMethod;
         this.highLimit = highLimit;
         this.lowLimit = lowLimit;
         this.eps = eps;
+        this.a = a;
     }
 
     public double rectangleMethod(double delta) {
-        int a = 1;
-        if ((lowLimit - highLimit) > 0) {
-            a = -1;
-            double t = lowLimit;
-            lowLimit = highLimit;
-            highLimit = t;
-        }
         result = 0;
         for (double i = lowLimit; i < highLimit; i+=delta) {
             double x;
@@ -41,7 +36,7 @@ public class Function {
                 result += delta * (Math.pow(x, 3) + 10 * Math.pow(x, 2) + 20);
             }
             if (numberOfFunction == 2) {
-                result += delta * (Math.log(x)+Math.pow(x, 2)+2);
+                result += delta * (Math.pow(x,0.5)+Math.pow(x, 2)+2);
             }
             if (numberOfFunction == 3) {
                 result += delta * ((8 * x + 20) / (2 * Math.pow(x, 2) + 4 * x + 3));
@@ -73,14 +68,6 @@ public class Function {
         result = int1;
         n = getN();
         return result;
-    }
-
-    public static void main(String[] args) {
-        Function function = new Function(2,2,2,27, 0.001);
-        function.getResult();
-        System.out.println("result " + function.getResult());
-        System.out.println("steps " + function.getN());
-        System.out.println("error " + function.error);
     }
 
 }
