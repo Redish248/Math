@@ -1,13 +1,13 @@
 public class Function {
-    int numberOfFunction;
-    double highLimit;
-    double lowLimit;
-    int numberOfMethod;
-    double result;
-    double eps;
-    int n;
-    double error;
-    double step;
+    int numberOfFunction;   //номер выбранной функции
+    double highLimit;       //верхний предел интегрирования
+    double lowLimit;        //нижний предел интегрирования
+    int numberOfMethod;     //номер метода
+    double result;          //результат
+    double eps;             //точность
+    int n;                  //количество шагов для разбиения
+    double error;           //погрешность
+    double step;            //шаг
     int a = 1;
 
     Function(int numberOfFunction, int numberOfMethod, double lowLimit, double highLimit, double eps, int a) {
@@ -19,6 +19,11 @@ public class Function {
         this.a = a;
     }
 
+    /**
+     * Метод прямоугольников
+     * @param delta шаги для вычисления значения функции
+     * @return результат
+     */
     public double rectangleMethod(double delta) {
         result = 0;
         for (double i = lowLimit; i < highLimit; i+=delta) {
@@ -49,11 +54,20 @@ public class Function {
         return  result;
     }
 
+
+    /**
+     * Метод для получения количество участков функции после разбиения
+     * @return количество шагов
+     */
     public int getN() {
         n = (int)Math.ceil((highLimit - lowLimit)/step);
         return  n;
     }
 
+    /**
+     * Получения результата после получения и проверки погрешности с заданной точностью
+     * @return результат
+     */
     public double getResult() {
         step = Math.pow(eps,0.25);
         double int1 = rectangleMethod(step);
