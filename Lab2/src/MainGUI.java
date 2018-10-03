@@ -110,45 +110,52 @@ public class MainGUI {
         submit.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                int numberOfFunction;
-                if (first.isSelected()) {
-                    numberOfFunction = 1;
-                } else {
-                    if (second.isSelected()) {
-                        numberOfFunction = 2;
+
+                    int numberOfFunction;
+                    if (first.isSelected()) {
+                        numberOfFunction = 1;
                     } else {
-                        if (third.isSelected()) {
-                            numberOfFunction = 3;
+                        if (second.isSelected()) {
+                            numberOfFunction = 2;
                         } else {
-                            numberOfFunction = 4;
+                            if (third.isSelected()) {
+                                numberOfFunction = 3;
+                            } else {
+                                numberOfFunction = 4;
+                            }
                         }
                     }
-                }
-                int numberOfMethod = 3;
-                if (left.isSelected()) {
-                    numberOfMethod = 1;
-                }
-                if (middle.isSelected()) {
-                    numberOfMethod = 2;
-                }
+                    int numberOfMethod = 3;
+                    if (left.isSelected()) {
+                        numberOfMethod = 1;
+                    }
+                    if (middle.isSelected()) {
+                        numberOfMethod = 2;
+                    }
 
-                double low = (double)setLow.getValue();
-                double high = (double)setHigh.getValue();
-                int a = 1;
-                if (low > high) {
-                    double t = low;
-                    low = high;
-                    high = t;
-                    a = -1;
+                    double low = (double) setLow.getValue();
+                    double high = (double) setHigh.getValue();
+                if (!((numberOfFunction == 2)&&((low <0) || (high <0)))) {
+                    int a = 1;
+                    if (low > high) {
+                        double t = low;
+                        low = high;
+                        high = t;
+                        a = -1;
+                    }
+                    Function function = new Function(numberOfFunction, numberOfMethod, low,
+                            high, Math.pow(10, (-1) * Integer.parseInt(setAccuracy.getValue().toString())), a);
+                    double one = BigDecimal.valueOf(function.getResult()).setScale((int) setAccuracy.getValue() + 2, RoundingMode.HALF_UP).doubleValue();
+                    logAnswer.setText(Double.toString(one));
+                    logCount.setText(Integer.toString(function.getN()));
+                    double two = BigDecimal.valueOf(function.error).setScale((int) setAccuracy.getValue() + 3, RoundingMode.HALF_UP).doubleValue();
+                    logPogr.setText(Double.toString(two));
+                    out.updateUI();
+                } else {
+                    logAnswer.setText("Функция не определена!");
+                    logCount.setText("Функция не определена!");
+                    logPogr.setText("Функция не определена!");
                 }
-                Function function = new Function(numberOfFunction,numberOfMethod,low,
-                        high,Math.pow(10,(-1)*Integer.parseInt(setAccuracy.getValue().toString())),a);
-                double one = BigDecimal.valueOf(function.getResult()).setScale((int)setAccuracy.getValue()+2, RoundingMode.HALF_UP).doubleValue();
-                logAnswer.setText(Double.toString(one));
-                logCount.setText(Integer.toString(function.getN()));
-                double two = BigDecimal.valueOf(function.error).setScale((int)setAccuracy.getValue()+3, RoundingMode.HALF_UP).doubleValue();
-                logPogr.setText(Double.toString(two));
-                out.updateUI();
             }
 
         });
