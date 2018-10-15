@@ -70,23 +70,27 @@ public class GraphGUI {
 
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> {
-            Scanner in = new Scanner(System.in);
-            System.out.println("Введите количество точек");
-            int n = in.nextInt();
-            System.out.println("Введите х");
-            double x[] = new double[n];
-            for (int i = 0; i < n; i++) {
-                x[i] = in.nextDouble();
+            try {
+                Scanner in = new Scanner(System.in);
+                System.out.println("Введите количество точек:");
+                int n = in.nextInt();
+                System.out.println("Введите координаты х:");
+                double x[] = new double[n];
+                for (int i = 0; i < n; i++) {
+                    x[i] = in.nextDouble();
+                }
+                System.out.println("Введите координаты y:");
+                double y[] = new double[n];
+                for (int i = 0; i < n; i++) {
+                    y[i] = in.nextDouble();
+                }
+                System.out.println("Введите степень полинома:");
+                int k = in.nextInt();
+                Approximation approximation = new Approximation(x, y, n, k);
+                new GraphGUI(approximation);
+            } catch (Exception exc) {
+                System.out.println("Повторите ввод");
             }
-            System.out.println("Введите y");
-            double y[] = new double[n];
-            for (int i = 0; i < n; i++) {
-                y[i] = in.nextDouble();
-            }
-            System.out.println("Введите степень полинома");
-            int k = in.nextInt();
-            Approximation approximation = new Approximation(x,y,n,k);
-            new GraphGUI(approximation);
         });
     }
 
@@ -142,7 +146,7 @@ public class GraphGUI {
         plot.setRenderer(2, splinerenderer2);
         NumberAxis numberAxis = new NumberAxis();
         plot.setRangeAxis(0, numberAxis);
-        plot.setRangeAxis(1,numberAxis,false);
+        plot.setRangeAxis(1,numberAxis);
         plot.setRangeAxis(2, numberAxis);
         plot.setDomainAxis(new NumberAxis("X"));
 
