@@ -8,104 +8,57 @@ import org.jfree.data.xy.XYSeriesCollection;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.util.Scanner;
 
 public class GraphGUI {
 
     JFrame frame;
-    GraphGUI() {
+    GraphGUI(Approximation approximation) {
         frame = new JFrame("Лабораторная работа № 3");
         frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         frame.setLayout(null );
 
         JPanel panel = new JPanel();
-        JButton submit = new JButton("Построить");
-        JSpinner setX = new JSpinner(new SpinnerNumberModel(5,4,10,1));
-        ButtonGroup group = new ButtonGroup();
-        JRadioButton first = new JRadioButton("sin(x)", false);
-        first.setFont(new Font("Courier New", Font.BOLD, 15));
-        first.setBackground(new Color(208,255,200));
-        group.add(first);
-        JRadioButton second = new JRadioButton("3x^2+5x+6", false);
-        second.setFont(new Font("Courier New", Font.BOLD, 15));
-        second.setBackground(new Color(208,255,200));
-        group.add(second);
-        JRadioButton third = new JRadioButton("e^x+2", false);
-        third.setFont(new Font("Courier New", Font.BOLD, 15));
-        third.setBackground(new Color(208,255,200));
-        group.add(third);
-        JLabel label = new JLabel("Количество разбиений:");
-        label.setFont(new Font("Courier New", Font.BOLD, 15));
-        JLabel label2 = new JLabel("Выберите функцию:");
-        label2.setFont(new Font("Courier New", Font.BOLD, 15));
 
-
-        JLabel parabola1 = new JLabel("Первая парабола:");
+        JLabel parabola1 = new JLabel("Первые коэффициенты:");
         parabola1.setFont(new Font("Courier New", Font.BOLD, 15));
         JLabel par1Text = new JLabel();
-        JLabel parabola2 = new JLabel("Вторая парабола");
+        JLabel parabola2 = new JLabel("Вторые коэффициенты");
         parabola2.setFont(new Font("Courier New", Font.BOLD, 15));
         JLabel par2Text = new JLabel();
 
-        panel.setLayout(new GridLayout(11,1));
+        panel.setLayout(new GridLayout(4,1));
         panel.setBackground(new Color(208,255,200));
-        panel.add(label);
-        panel.add(setX);
-        panel.add(label2);
-        panel.add(first);
-        panel.add(second);
-        panel.add(third);
-        panel.add(submit);
         panel.add(parabola1);
         panel.add(par1Text);
         panel.add(parabola2);
         panel.add(par2Text);
 
-        submit.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                JPanel chartPanel = new JPanel();
-                int size = (int)setX.getValue();
-                int numberOfFunction;
-                if (first.isSelected()) {
-                    numberOfFunction =1;
-                } else {
-                    if (second.isSelected()) {
-                        numberOfFunction = 2;
-                    } else {
-                        numberOfFunction = 3;
-                    }
-                }
-                double x[] = new double[size+1];
-                double step = 3*Math.PI/(2*size);
-                double k =0;
-                for (int i = 0; i <= size; i++) {
-                    x[i] = k;
-                    k +=step;
-                }
-                Approximation approximation = new Approximation(x,numberOfFunction,size+1);
-                approximation.mnk();
-                chartPanel = createGraph(approximation.coefficients1,approximation.coefficients2, x, size+1, numberOfFunction);
-                frame.getContentPane().add(chartPanel);
-                chartPanel.setBounds(210,0,770,550);
+        JPanel chartPanel = new JPanel();
 
-                double a1 = BigDecimal.valueOf(approximation.coefficients1[0]).setScale(3, RoundingMode.HALF_UP).doubleValue();
-                double b1 = BigDecimal.valueOf(approximation.coefficients1[1]).setScale(3, RoundingMode.HALF_UP).doubleValue();
-                double c1 = BigDecimal.valueOf(approximation.coefficients1[2]).setScale(3, RoundingMode.HALF_UP).doubleValue();
-                double a2 = BigDecimal.valueOf(approximation.coefficients2[0]).setScale(3, RoundingMode.HALF_UP).doubleValue();
-                double b2 = BigDecimal.valueOf(approximation.coefficients2[1]).setScale(3, RoundingMode.HALF_UP).doubleValue();
-                double c2 = BigDecimal.valueOf(approximation.coefficients2[2]).setScale(3, RoundingMode.HALF_UP).doubleValue();
-                par1Text.setText(a1 + "x^2 + " + b1 + "x + " + c1);
-                par2Text.setText(a2 + "x^2 + " + b2 + "x + " + c2);
-                panel.updateUI();
-            }
-        });
+        approximation.mnk();
+        chartPanel = createGraph(approximation);
+        frame.getContentPane().add(chartPanel);
+        chartPanel.setBounds(210,0,770,550);
+
+        String par1 = "";
+        String par2 = "";
+        for (int i = approximation.k; i >= 0 ; i--) {
+            par1 = par1.concat( BigDecimal.valueOf(approximation.coefficients1[i]).setScale(2, RoundingMode.HALF_UP).doubleValue() + "; ");
+        }
+
+        for (int i = approximation.k; i >= 0 ; i--) {
+            par2 = par2.concat( BigDecimal.valueOf(approximation.coefficients2[i]).setScale(2, RoundingMode.HALF_UP).doubleValue() + "; ");
+        }
+        par1Text.setText(par1);
+        par2Text.setText(par2);
+        panel.updateUI();
+
 
         frame.add(panel);
-        panel.setBounds(0,0,200,300);
+        panel.setBounds(0,0,200,200);
 
         frame.getContentPane().setBackground(new Color(208,255,200));
         frame.setSize(1000,600);
@@ -117,54 +70,52 @@ public class GraphGUI {
 
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> {
-            new GraphGUI();
+            Scanner in = new Scanner(System.in);
+            System.out.println("Введите количество точек");
+            int n = in.nextInt();
+            System.out.println("Введите х");
+            double x[] = new double[n];
+            for (int i = 0; i < n; i++) {
+                x[i] = in.nextDouble();
+            }
+            System.out.println("Введите y");
+            double y[] = new double[n];
+            for (int i = 0; i < n; i++) {
+                y[i] = in.nextDouble();
+            }
+            System.out.println("Введите степень полинома");
+            int k = in.nextInt();
+            Approximation approximation = new Approximation(x,y,n,k);
+            new GraphGUI(approximation);
         });
     }
 
-    JPanel createGraph(double koef1[], double koef2[], double[] x, int size, int numberOfFunction) {
-        double low = x[0];
-        double high = x[size-1];
+    JPanel createGraph(Approximation approximation) {
+
         XYSeries series1;
 
-        switch (numberOfFunction) {
-            case 1: {
-                series1 = new XYSeries("sin(x)");
-                for (int i = 0; i < size; i ++) {
-                    series1.add(x[i], Math.sin(x[i]));
+                series1 = new XYSeries("points");
+                for (int i = 0; i < approximation.n; i ++) {
+                    series1.add(approximation.x[i], approximation.y[i]);
                 }
-                break;
+
+
+        XYSeries series2 = new XYSeries("function1");
+        for(double i = 0; i <= 10; i+=0.1){
+            double y = 0;
+            for (int j = 0; j <= approximation.k; j++) {
+                y += approximation.coefficients1[j]*Math.pow(i,j);
             }
-            case 2: {
-                series1 =  new XYSeries("3x^2+5x+6");
-                for (int i = 0; i < size; i ++) {
-                    series1.add(x[i], 3*Math.pow(x[i],2)+5*x[i]+6);
-                }
-                break;
-            }
-            default: {
-                series1 =  new XYSeries("e^x+2");
-                for (double i = 0; i < high; i ++) {
-                    series1.add(i, Math.pow(Math.E,i)+2);
-                }
-                break;
-            }
+            series2.add(i, y);
         }
 
-        double a1 = BigDecimal.valueOf(koef1[0]).setScale(3, RoundingMode.HALF_UP).doubleValue();
-        double b1 = BigDecimal.valueOf(koef1[1]).setScale(3, RoundingMode.HALF_UP).doubleValue();
-        double c1 = BigDecimal.valueOf(koef1[2]).setScale(3, RoundingMode.HALF_UP).doubleValue();
-        double a2 = BigDecimal.valueOf(koef2[0]).setScale(3, RoundingMode.HALF_UP).doubleValue();
-        double b2 = BigDecimal.valueOf(koef2[1]).setScale(3, RoundingMode.HALF_UP).doubleValue();
-        double c2 = BigDecimal.valueOf(koef2[2]).setScale(3, RoundingMode.HALF_UP).doubleValue();
-
-        XYSeries series2 = new XYSeries(a1+"*x^2 + "+b1 + "*x + " + c1);
-        for(double i = low; i <= high; i+=0.1){
-            series2.add(i, koef1[0]*Math.pow(i,2)+koef1[1]*i+koef1[2]);
-        }
-
-        XYSeries series3 = new XYSeries(a2+"*x^2 + "+b2 + "*x + " + c2);
-        for(double i = x[0]; i <= x[size-1]; i+=0.1){
-            series3.add(i, koef2[0]*Math.pow(i,2)+koef2[1]*i+koef2[2]);
+        XYSeries series3 = new XYSeries("function 2");
+        for(double i = 0; i <= 10; i+=0.1){
+            double y = 0;
+            for (int j = 0; j <= approximation.k; j++) {
+                y += approximation.coefficients2[j]*Math.pow(i, j);
+            }
+            series3.add(i, y);
         }
 
         XYSeriesCollection dataset1 = new XYSeriesCollection();
