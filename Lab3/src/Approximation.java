@@ -13,18 +13,13 @@ public class Approximation {
         this.k = k;
     }
 
-    /**
-     * Высчитывает коэффициенты y
-     * @param x0  точки х из заданной функции
-     * @param n  количество точек
-     * @return  полученные коэффициенты Y
-     */
 
     /**
      * Функция для расчёта коэффициентов паработы по методу наименьших квадратов
      * @param x абсциссы исходных точек
      * @param y ординаты исходных точек
      * @param n количество точек
+     * @param k степень полинома
      * @return массив с полученными коэффицентами
      */
     double[] countCoefficients(double x[], double y[], int n, int k) {
@@ -114,12 +109,12 @@ public class Approximation {
             }
         }
         int i = 0;
-        int k = 0;
+        int e = 0;
         while (i <= n-1) {
             if (i != index) {
-                x0[k] = x[i];
-                y0[k] = y[i];
-                k++;
+                x0[e] = x[i];
+                y0[e] = y[i];
+                e++;
             }
             i++;
         }
