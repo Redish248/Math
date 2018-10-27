@@ -26,11 +26,22 @@ public class GraphGUI extends Application {
     public void start(Stage primaryStage) {
         try {
             BorderPane root = new BorderPane();
-            Scene scene = new Scene(root,300,400);
+            Scene scene = new Scene(root,300,500);
             scene.getStylesheets().addAll(this.getClass().getResource("styles.css").toExternalForm());
             primaryStage.setScene(scene);
             root.setId("pane");
             primaryStage.setTitle("ЛР №4");
+
+            Label function = new Label("Выберите функцию:");
+            final ToggleGroup group = new ToggleGroup();
+            RadioButton first = new RadioButton("x*x-2*y");
+            first.setToggleGroup(group);
+            first.setSelected(true);
+            RadioButton second = new RadioButton("x+y");
+            second.setToggleGroup(group);
+            RadioButton third = new RadioButton("e^x-2*y");
+            third.setToggleGroup(group);
+
 
             GridPane panel = new GridPane();
             Label startValue = new Label("Начальные условия:");
@@ -63,14 +74,23 @@ public class GraphGUI extends Application {
             gridPane.add(textY,4,1);
             gridPane.add(y2,3,1);
 
-            panel.add(startValue, 1,1);
-            panel.add(gridPane,1,2);
-            panel.add(end,1,3);
+            GridPane gridPane2 = new GridPane();
+            gridPane2.setVgap(10);
+            gridPane2.setPadding(new Insets(10, 10, 10, 10));;
+            gridPane2.add(function,1,1);
+            gridPane2.add(first,1,2);
+            gridPane2.add(second,1,3);
+            gridPane2.add(third,1,4);
+
+            panel.add(gridPane2,1,1);
+            panel.add(startValue, 1,2);
+            panel.add(gridPane,1,3);
+            panel.add(end,1,4);
             textEnd.setMaxSize(185,5);
-            panel.add(textEnd,1,4);
-            panel.add(accuracy,1,5);
-            panel.add(setAccuracy,1,6);
-            panel.add(submit,1,7);
+            panel.add(textEnd,1,5);
+            panel.add(accuracy,1,6);
+            panel.add(setAccuracy,1,7);
+            panel.add(submit,1,8);
 
 
             submit.addEventHandler(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
@@ -81,7 +101,17 @@ public class GraphGUI extends Application {
                         double y0 = Double.parseDouble(textY.getText().trim());
                         double end = Double.parseDouble(textEnd.getText().trim());
                         int e = setAccuracy.getValue();
-                        YEuler yEuler = new YEuler(x0, y0, end, e);
+                        int number;
+                        if (first.isSelected()) {
+                            number = 1;
+                        } else {
+                            if(second.isSelected()) {
+                                number = 2;
+                            } else {
+                                number = 3;
+                            }
+                        }
+                        YEuler yEuler = new YEuler(x0, y0, end, e,number);
                         yEuler.method();
                         createGraph(yEuler);
                     } catch (Exception exc) {
